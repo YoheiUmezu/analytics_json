@@ -36,12 +36,58 @@
 
 ## Raw URLs
 
-- シナリオ一覧  
+- シナリオ一覧（Markdown）  
   `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/scenario_index.md`
-- 例: latest レポート  
+- シナリオ一覧（JSON）  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/scenario_index.json`
+
+### campaign_boost
+- report  
   `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_campaign_boost_report.md`
-- 例: latest JSON  
+- before  
   `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_campaign_boost_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_campaign_boost_after.json`
+
+### policy_change
+- report  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_policy_change_report.md`
+- before  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_policy_change_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_policy_change_after.json`
+
+### factory_busy
+- report  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_factory_busy_report.md`
+- before  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_factory_busy_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_factory_busy_after.json`
+
+### mobile_push
+- report  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_mobile_push_report.md`
+- before  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_mobile_push_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_mobile_push_after.json`
+
+### qa_improvement
+- report  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_qa_improvement_report.md`
+- before  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_qa_improvement_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_qa_improvement_after.json`
+
+### new_joiners
+- report  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_new_joiners_report.md`
+- before  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_new_joiners_before.json`
+- after  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_new_joiners_after.json`
 
 ## Local Run
 
