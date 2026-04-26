@@ -11,6 +11,7 @@ fake = Faker("ja_JP")
 
 OUTPUT_DIR = "analytics_json"
 os.makedirs(OUTPUT_DIR, exist_ok=True)
+STATE_FILE = os.path.join(OUTPUT_DIR, "run_state.json")
 
 NUM_USERS = 3000
 NUM_CONTENTS = 30
@@ -131,6 +132,41 @@ def get_today_scenario(today=None):
     if today is None:
         today = datetime.now(timezone.utc).date()
     return SCENARIOS[today.toordinal() % len(SCENARIOS)]
+
+
+def load_state():
+    if not os.path.exists(STATE_FILE):
+        return {"completed_scenarios": []}
+    with open(STATE_FILE, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+
+def save_state(state):
+    with open(STATE_FILE, "w", encoding="utf-8") as f:
+        json.dump(state, f, ensure_ascii=False, indent=2)
+
+
+def update_scenario_progress(scenario_name):
+    state = load_state()
+    completed = set(state.get("completed_scenarios", []))
+    completed.add(scenario_name)
+    state["completed_scenarios"] = sorted(completed)
+    state["updated_at"] = datetime.utcnow().isoformat()
+    save_state(state)
+    return len(completed) >= len(SCENARIOS), state
+
+
+def stop_cron_job():
+    cron_entry = (
+        "0 9 * * * /Users/umedzuyouhei/Desktop/analytics/run_daily_analytics.sh "
+        ">> /Users/umedzuyouhei/Desktop/analytics/cron.log 2>&1"
+    )
+    result = subprocess.run(["crontab", "-l"], capture_output=True, text=True)
+    if result.returncode != 0:
+        return
+    lines = [line for line in result.stdout.splitlines() if line.strip() and line.strip() != cron_entry]
+    new_cron = "\n".join(lines) + ("\n" if lines else "")
+    subprocess.run(["crontab", "-"], input=new_cron, text=True, check=True)
 
 
 def generate_events(users, contents, phase, scenario):
@@ -348,9 +384,15 @@ if __name__ == "__main__":
     save_json(selected_after, f"analytics_{today_key}_{scenario['name']}_after.json")
     md = generate_md_report(selected_before, selected_after, scenario)
     save_md(md, f"report_{today_key}_{scenario['name']}.md")
+    finished_all, state = update_scenario_progress(scenario["name"])
+    if finished_all:
+        stop_cron_job()
     git_push()
 
     print("JSON generated: analytics_json/")
     print(f"scenario: {scenario['name']}")
+    print(f"completed scenarios: {len(state.get('completed_scenarios', []))}/{len(SCENARIOS)}")
+    if finished_all:
+        print("All scenarios completed once. Cron job removed.")
     print(f"before events: {len(selected_before['events'])}")
     print(f"after events: {len(selected_after['events'])}")
