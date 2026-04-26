@@ -1,40 +1,49 @@
-# analytics_json automation
+# Analytics Scenario Generator
 
-毎朝 9:00 に analytics データを自動生成し、GitHub に push するプロジェクトです。
+このフォルダは、6シナリオの analytics データと Manus 向けレポートを生成し、GitHub に保存するための作業ディレクトリです。
 
-## What this does
+## Folder Structure
 
-- 6つのシナリオを日替わりローテーションで選択
-- `before` / `after` の JSON を生成
-- KPI 比較を含む Markdown レポートを生成
-- 生成物を `git add` / `commit` / `push` して GitHub に反映
+- `generate_analytics.py`: メイン生成スクリプト
+- `run_daily_analytics.sh`: 日次実行用ランナー（必要時のみ使用）
+- `analytics_json/`: 生成物出力先
+- `requirements.txt`: Python依存関係
 
 ## Scenarios
 
-- `campaign_boost` (全社キャンペーン)
-- `policy_change` (制度変更周知)
-- `factory_busy` (繁忙期)
-- `mobile_push` (モバイル強化)
-- `qa_improvement` (FAQ改善)
-- `new_joiners` (新入社員期)
+- `campaign_boost`（全社キャンペーン）
+- `policy_change`（制度変更周知）
+- `factory_busy`（繁忙期）
+- `mobile_push`（モバイル強化）
+- `qa_improvement`（FAQ改善）
+- `new_joiners`（新入社員期）
 
-## Output files
+## Generated Artifacts
 
-出力先は `analytics_json/` です。
+`analytics_json/` 配下に以下を出力します。
 
-- `analytics_YYYYMMDD_<scenario>_before.json`
-- `analytics_YYYYMMDD_<scenario>_after.json`
-- `report_YYYYMMDD_<scenario>.md`
+- 日付付き成果物
+  - `analytics_YYYYMMDD_<scenario>_before.json`
+  - `analytics_YYYYMMDD_<scenario>_after.json`
+  - `report_YYYYMMDD_<scenario>.md`
+- シナリオ最新成果物（上書き）
+  - `latest_<scenario>_before.json`
+  - `latest_<scenario>_after.json`
+  - `latest_<scenario>_report.md`
+- 一覧インデックス
+  - `scenario_index.md`
+  - `scenario_index.json`
 
-日付入りファイル名のため、毎日 Raw URL が変わります。
+## Raw URLs
 
-## Raw URL format
+- シナリオ一覧  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/scenario_index.md`
+- 例: latest レポート  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_campaign_boost_report.md`
+- 例: latest JSON  
+  `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/latest_campaign_boost_before.json`
 
-- `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/report_YYYYMMDD_<scenario>.md`
-- `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/analytics_YYYYMMDD_<scenario>_before.json`
-- `https://raw.githubusercontent.com/YoheiUmezu/analytics_json/main/analytics_json/analytics_YYYYMMDD_<scenario>_after.json`
-
-## Manual run
+## Local Run
 
 ```bash
 cd /Users/umedzuyouhei/Desktop/analytics
@@ -42,12 +51,11 @@ source venv/bin/activate
 python generate_analytics.py
 ```
 
-## Cron schedule
+## Cron Status
 
-以下の cron を登録済みです。
+- 9:00 の analytics 自動実行 cron は停止済みです。
+- 再開する場合は下記を登録してください。
 
 ```cron
 0 9 * * * /Users/umedzuyouhei/Desktop/analytics/run_daily_analytics.sh >> /Users/umedzuyouhei/Desktop/analytics/cron.log 2>&1
 ```
-
-`run_daily_analytics.sh` は venv 有効化後に `generate_analytics.py` を実行します。

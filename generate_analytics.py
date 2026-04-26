@@ -345,6 +345,54 @@ def save_md(md, filename):
         f.write(md)
 
 
+def save_latest_for_scenario(before, after, md, scenario_name):
+    save_json(before, f"latest_{scenario_name}_before.json")
+    save_json(after, f"latest_{scenario_name}_after.json")
+    save_md(md, f"latest_{scenario_name}_report.md")
+
+
+def build_scenario_index():
+    lines = [
+        "# Scenario Index",
+        "",
+        "最新の各シナリオ成果物です（上書き更新）。",
+        "",
+    ]
+    index = {"updated_at": datetime.utcnow().isoformat(), "scenarios": []}
+
+    for scenario in SCENARIOS:
+        name = scenario["name"]
+        label = scenario["label"]
+        before_file = f"latest_{name}_before.json"
+        after_file = f"latest_{name}_after.json"
+        report_file = f"latest_{name}_report.md"
+        before_path = os.path.join(OUTPUT_DIR, before_file)
+        after_path = os.path.join(OUTPUT_DIR, after_file)
+        report_path = os.path.join(OUTPUT_DIR, report_file)
+
+        ready = all(os.path.exists(p) for p in [before_path, after_path, report_path])
+        index["scenarios"].append(
+            {
+                "name": name,
+                "label": label,
+                "ready": ready,
+                "before": before_file,
+                "after": after_file,
+                "report": report_file,
+            }
+        )
+        status = "ready" if ready else "missing"
+        lines.append(f"## {name} ({label})")
+        lines.append(f"- status: {status}")
+        lines.append(f"- report: `{report_file}`")
+        lines.append(f"- before: `{before_file}`")
+        lines.append(f"- after: `{after_file}`")
+        lines.append("")
+
+    save_md("\n".join(lines).rstrip() + "\n", "scenario_index.md")
+    save_json(index, "scenario_index.json")
+
+
 def git_push():
     subprocess.run(["git", "add", "analytics_json"], check=True)
     status = subprocess.run(["git", "status", "--porcelain"], check=True, capture_output=True, text=True)
@@ -384,6 +432,8 @@ if __name__ == "__main__":
     save_json(selected_after, f"analytics_{today_key}_{scenario['name']}_after.json")
     md = generate_md_report(selected_before, selected_after, scenario)
     save_md(md, f"report_{today_key}_{scenario['name']}.md")
+    save_latest_for_scenario(selected_before, selected_after, md, scenario["name"])
+    build_scenario_index()
     finished_all, state = update_scenario_progress(scenario["name"])
     if finished_all:
         stop_cron_job()
